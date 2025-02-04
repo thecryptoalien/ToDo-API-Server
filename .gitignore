@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/ToDo-API-Server/Notes.txt
+/ToDo-API-Server/Migrations/20250204225213_SeedNewData.cs
+/ToDo-API-Server/Migrations/20250204225213_SeedNewData.Designer.cs

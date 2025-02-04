@@ -28,12 +28,18 @@ namespace ToDo_API_Server.Controllers
         private readonly ApplicationDbContext _context;
 
         /// <summary>
+        /// ILogger<ToDoEntriesController> - ILogger for sending messages to stdio
+        /// </summary>
+        private readonly ILogger<ToDoEntriesController> _logger;
+
+        /// <summary>
         /// ToDoEntriesController constructor that accepts ApplicationDbContext param
         /// </summary>
         /// <param name="context">ApplicationDbContext</param>
-        public ToDoEntriesController(ApplicationDbContext context)
+        public ToDoEntriesController(ApplicationDbContext context, ILogger<ToDoEntriesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         /// <summary>
@@ -46,6 +52,7 @@ namespace ToDo_API_Server.Controllers
         public async Task<ActionResult<IEnumerable<ToDoEntry>>> GetToDoEntries()
         {
             // Return list of ToDo Entries
+            _logger.LogInformation("/ToDoEntries - GET - Request received from " + GetUserId());
             return await _context.ToDoEntries.ToListAsync();
         }
 
@@ -60,6 +67,7 @@ namespace ToDo_API_Server.Controllers
         public async Task<ActionResult<ToDoEntry>> GetToDoEntry(Guid id)
         {
             // Find ToDoEntry by Guid id param
+            _logger.LogInformation("/ToDoEntries/id - GET - Request received from " + GetUserId());
             var toDoEntry = await _context.ToDoEntries.FindAsync(id);
 
             // Check if Valid Entry Exists
@@ -79,11 +87,13 @@ namespace ToDo_API_Server.Controllers
         /// <param name="confirm">Boolean true/false to Confirm</param>
         /// <returns>Empty Response</returns>
         [HttpPut("{id},{confirm}")]
+        [Authorize(Roles = "Admin")]
         [SwaggerResponse(204, "OK - The ToDoEntry completion has been confirmed true/false")]
         [SwaggerOperation(Description = "Confirms ToDo Entry completion true/false - Requires Authorization", OperationId = "/ToDoEntries/id - Confirm")]
         public async Task<IActionResult> PutToDoEntryConfirm(Guid id, bool confirm)
         {
             // Find ToDoEntry by Guid id param
+            _logger.LogInformation("/ToDoEntries/id,confirm - PUT - Request received from " + GetUserId());
             var toDoEntry = await _context.ToDoEntries.FindAsync(id);
 
             // Check if Valid Entry Exists
@@ -111,8 +121,6 @@ namespace ToDo_API_Server.Controllers
 
             // Change State of db entity but ignore createdBy and createdTime
             _context.Entry(toDoEntry).State = EntityState.Modified;
-            //_context.Entry(toDoEntry).Property(p => p.CreatedBy).IsModified = false;
-            //_context.Entry(toDoEntry).Property(p => p.CreateTime).IsModified = false;
 
             // Try to save changes to database 
             try
@@ -140,6 +148,7 @@ namespace ToDo_API_Server.Controllers
         public async Task<IActionResult> PutToDoEntry(Guid id, ToDoEntry toDoEntry)
         {
             // Find ToDoEntry by Guid id param and check for null
+            _logger.LogInformation("/ToDoEntries/id - PUT - Request received from " + GetUserId());
             var dbToDoEntry = await _context.ToDoEntries.FindAsync(id);
             if (dbToDoEntry == null)
             { 
@@ -214,6 +223,7 @@ namespace ToDo_API_Server.Controllers
         public async Task<ActionResult<ToDoEntry>> PostToDoEntry(ToDoEntry toDoEntry)
         {
             // Check for initial Done status and prepare for approval
+            _logger.LogInformation("/ToDoEntries - POST - Request received from " + GetUserId());
             if (toDoEntry.Status == ToDoStatus.Done)
             {
                 toDoEntry.PendingApproval = true;
@@ -245,6 +255,7 @@ namespace ToDo_API_Server.Controllers
         public async Task<IActionResult> DeleteToDoEntry(Guid id)
         {
             // Find ToDoEntry with id and check if valid entry
+            _logger.LogInformation("/ToDoEntries/id - DELETE - Request received from " + GetUserId());
             var toDoEntry = await _context.ToDoEntries.FindAsync(id);
             if (toDoEntry == null)
             {
