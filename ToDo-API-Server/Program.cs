@@ -12,11 +12,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllers();
 
-// Add Swagger/OpenAPI endpoints and configure security scheme and requirements
+// Add Swagger/OpenAPI endpoints and configure security scheme and other requirements
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Internal", Version = "v1" });
+    options.EnableAnnotations();
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -44,12 +44,16 @@ var app = builder.Build();
 // Map identity api routes 
 app.MapIdentityApi<IdentityUser>();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Use Swagger, Swagger UI, ReDoc, and configure
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{ 
+    options.DocumentTitle = "ToDo-API-Server - Swagger UI"; 
+});
+app.UseReDoc(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    options.DocumentTitle = "ToDo-API-Server - API Docs";
+});
 
 // Use Https redirection, authorization, and map controllers
 app.UseHttpsRedirection();

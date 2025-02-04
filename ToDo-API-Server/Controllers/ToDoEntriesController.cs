@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using ToDo_API_Server.Data;
 using ToDo_API_Server.Models;
 
@@ -39,6 +41,8 @@ namespace ToDo_API_Server.Controllers
         /// </summary>
         /// <returns>List<ToDoEntry></returns>
         [HttpGet]
+        [SwaggerResponse(200, "OK - The list of ToDoEntries has been retrieved")]
+        [SwaggerOperation(Description = "Gets list of ToDo Entries - Requires Authorization", OperationId = "/ToDoEntries - List")]
         public async Task<ActionResult<IEnumerable<ToDoEntry>>> GetToDoEntries()
         {
             // Return list of ToDo Entries
@@ -51,6 +55,8 @@ namespace ToDo_API_Server.Controllers
         /// <param name="id">Id of ToDoEntry</param>
         /// <returns>ToDoEntry</returns>
         [HttpGet("{id}")]
+        [SwaggerResponse(200, "OK - The ToDoEntry has been retrieved")]
+        [SwaggerOperation(Description = "Gets ToDo Entry with Id - Requires Authorization", OperationId = "/ToDoEntries/id - Get")]
         public async Task<ActionResult<ToDoEntry>> GetToDoEntry(Guid id)
         {
             // Find ToDoEntry by Guid id param
@@ -67,23 +73,37 @@ namespace ToDo_API_Server.Controllers
         }
 
         /// <summary>
-        /// PUT: ToDoEntries/Guid 
+        /// PUT: ToDoEntries/Guid,bool 
         /// </summary>
         /// <param name="id">Id of ToDoEntry</param>
-        /// <param name="toDoEntry">ToDoEntry from body of request</param>
+        /// <param name="confirm">Boolean true/false to Confirm</param>
         /// <returns>Empty Response</returns>
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutToDoEntry(Guid id, ToDoEntry toDoEntry)
+        [HttpPut("{id},{confirm}")]
+        [SwaggerResponse(204, "OK - The ToDoEntry completion has been confirmed true/false")]
+        [SwaggerOperation(Description = "Confirms ToDo Entry completion true/false - Requires Authorization", OperationId = "/ToDoEntries/id - Confirm")]
+        public async Task<IActionResult> PutToDoEntryConfirm(Guid id, bool confirm)
         {
-            // Check param match id must equal toDoEntry.Id
-            if (id != toDoEntry.Id)
+            // Find ToDoEntry by Guid id param
+            var toDoEntry = await _context.ToDoEntries.FindAsync(id);
+
+            // Check if Valid Entry Exists
+            if (toDoEntry == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            // Set UpdatedBy 
+            // Check If confirm is true and set approval property values
+            if (confirm) 
+            {
+                toDoEntry.ApprovedTime = DateTime.Now;
+                toDoEntry.ApprovedBy = GetUserId();
+                toDoEntry.Status = ToDoStatus.Done;
+            }
 
+            // Set pendingApproval false and updatedBy
+            toDoEntry.PendingApproval = false;
             toDoEntry.UpdatedBy = GetUserId();
+
 #if DEBUG
             // Set Update Time for inMemory database
             toDoEntry.UpdateTime = DateTime.Now;
@@ -91,9 +111,76 @@ namespace ToDo_API_Server.Controllers
 
             // Change State of db entity but ignore createdBy and createdTime
             _context.Entry(toDoEntry).State = EntityState.Modified;
-            _context.Entry(toDoEntry).Property(p => p.CreatedBy).IsModified = false;
-            _context.Entry(toDoEntry).Property(p => p.CreateTime).IsModified = false;
+            //_context.Entry(toDoEntry).Property(p => p.CreatedBy).IsModified = false;
+            //_context.Entry(toDoEntry).Property(p => p.CreateTime).IsModified = false;
 
+            // Try to save changes to database 
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException) 
+            {
+                throw;
+            }
+
+            // Return Empty Response
+            return NoContent();
+        }
+
+        /// <summary>
+        /// PUT: ToDoEntries/Guid 
+        /// </summary>
+        /// <param name="id">Id of ToDoEntry</param>
+        /// <param name="toDoEntry">ToDoEntry from body of request</param>
+        /// <returns>Empty Response</returns>
+        [HttpPut("{id}")]
+        [SwaggerResponse(204, "OK - The ToDoEntry has been updated")]
+        [SwaggerOperation(Description = "Updates ToDo Entry - Requires Authorization", OperationId = "/ToDoEntries/id - Update")]
+        public async Task<IActionResult> PutToDoEntry(Guid id, ToDoEntry toDoEntry)
+        {
+            // Find ToDoEntry by Guid id param and check for null
+            var dbToDoEntry = await _context.ToDoEntries.FindAsync(id);
+            if (dbToDoEntry == null)
+            { 
+                return NotFound(); 
+            }
+
+            // Check for Status Update from Request body and if already approved
+            if (toDoEntry.Status == ToDoStatus.Done && dbToDoEntry.ApprovedTime == null) 
+            {
+                toDoEntry.PendingApproval = true;
+                toDoEntry.Status = ToDoStatus.Doing;
+            }
+
+            // Set UpdatedBy 
+            toDoEntry.UpdatedBy = GetUserId();
+#if DEBUG
+            // Set Update Time for inMemory database
+            toDoEntry.UpdateTime = DateTime.Now;
+#endif
+
+            // Update only values given
+            Type t = typeof(ToDoEntry);
+            PropertyInfo[] propInfo = t.GetProperties();
+            foreach (PropertyInfo pi in propInfo) 
+            {
+                // Get value from object in body of request
+                var value = pi.GetValue(toDoEntry);
+                if (value != null)
+                {
+                    // Check for null/new Guids and DateTimes to not overwrite those properties
+                    if (!(value.GetType() == typeof(Guid) && (Guid)value == new Guid()) && !(value.GetType() == typeof(DateTime) && (DateTime)value == new DateTime()))
+                    {
+                        // Update value given
+                        pi.SetValue(dbToDoEntry, value);
+                    }                
+                }
+            }
+
+            // Change State of db entity 
+            _context.Entry(dbToDoEntry).State = EntityState.Modified;
+            
             // Try to save changes to database
             try
             {
@@ -101,7 +188,7 @@ namespace ToDo_API_Server.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                // Check if Entry exists and return not found or throw exception
+                // Check if Entry still exists and return not found or throw exception
                 if (!ToDoEntryExists(id))
                 {
                     return NotFound();
@@ -122,8 +209,17 @@ namespace ToDo_API_Server.Controllers
         /// <param name="toDoEntry">ToDoEntry from body of request</param>
         /// <returns>CreatedAtAction GetToDoEntry</returns>
         [HttpPost]
+        [SwaggerResponse(201, "OK - The ToDoEntry has been created", typeof(ToDoEntry))]
+        [SwaggerOperation(Description = "Creates new ToDo Entry - Requires Authorization", OperationId = "/ToDoEntries - Create")]
         public async Task<ActionResult<ToDoEntry>> PostToDoEntry(ToDoEntry toDoEntry)
         {
+            // Check for initial Done status and prepare for approval
+            if (toDoEntry.Status == ToDoStatus.Done)
+            {
+                toDoEntry.PendingApproval = true;
+                toDoEntry.Status = ToDoStatus.Doing;
+            }
+
             // Set CreatedBy 
             toDoEntry.CreatedBy = GetUserId();
 #if DEBUG
@@ -144,6 +240,8 @@ namespace ToDo_API_Server.Controllers
         /// <param name="id">Id of ToDoEntry</param>
         /// <returns>Empty Response</returns>
         [HttpDelete("{id}")]
+        [SwaggerResponse(204, "OK - The ToDoEntry has been deleted")]
+        [SwaggerOperation(Description = "Deletes ToDo Entry with Id - Requires Authorization", OperationId = "/ToDoEntries/id - Delete")]
         public async Task<IActionResult> DeleteToDoEntry(Guid id)
         {
             // Find ToDoEntry with id and check if valid entry

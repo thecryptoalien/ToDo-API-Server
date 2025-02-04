@@ -17,7 +17,7 @@ namespace ToDo_API_Server.Models
         /// </summary>
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [SwaggerIgnore]
+        [SwaggerSchema("The ToDo Enrty Identifier", ReadOnly = true)]
         public Guid Id { get; set; }
         /// <summary>
         /// Title of ToDo Entry - String(128) - Required
@@ -25,6 +25,7 @@ namespace ToDo_API_Server.Models
         [Required]
         [StringLength(128)]
         [DefaultValue("Title of ToDo Entry - Limit of 128 characters")]
+        [SwaggerSchema("Title of ToDo Enrty")]
         public string? Title { get; set; }
         /// <summary>
         /// Description of ToDo Entry - String(512) - Required
@@ -32,53 +33,57 @@ namespace ToDo_API_Server.Models
         [Required]
         [StringLength(512)]
         [DefaultValue("Description of ToDo Entry - Limit of 512 characters")]
+        [SwaggerSchema("Description of ToDo Enrty")]
         public string? Description { get; set; }
         /// <summary>
         /// Status of ToDo Entry - Enum<ToDoStatus> - Required
         /// </summary>
         [DefaultValue("ToDo")]
+        [SwaggerSchema("Status of ToDo Enrty")]
         public ToDoStatus Status { get; set; }
         /// <summary>
         /// Is ToDo Entry Pending Aproval - Boolean - Nullable 
         /// </summary>
-        [SwaggerIgnore]
+        [SwaggerSchema("Is ToDo Entry Pending Aproval", ReadOnly = true)]
         public bool? PendingApproval { get; set; }
         /// <summary>
         /// Create Time of ToDo Entry - DateTime - Required 
         /// </summary>
-        [SwaggerIgnore]
+        [SwaggerSchema("Creation Time of ToDo Enrty" , ReadOnly = true)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreateTime { get; set; }
         /// <summary>
         /// Uptate Time of ToDo Entry - DateTime - Nullable 
         /// </summary>
-        [SwaggerIgnore]
+        [SwaggerSchema("Update Time of ToDo Enrty", ReadOnly = true)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? UpdateTime { get; set; }
         /// <summary>
         /// Create Time of ToDo Entry - DateTime - Nullable 
         /// </summary>
-        [SwaggerIgnore]
+        [SwaggerSchema("Approval Time of ToDo Enrty", ReadOnly = true)]
         public DateTime? ApprovedTime { get; set; }
         /// <summary>
         /// Id of User that created ToDo Entry - Guid - Required
         /// </summary>
+        [SwaggerSchema("Creator Id of ToDo Enrty", ReadOnly = true)]
         public Guid CreatedBy { get; set; }
         /// <summary>
         /// Id of User that updated ToDo Entry - Guid - Nullable
         /// </summary>
-        [SwaggerIgnore]
+        [SwaggerSchema("Updater Id of ToDo Enrty", ReadOnly = true)]
         public Guid? UpdatedBy { get; set; }
         /// <summary>
         /// Id of User that approved ToDo Entry - Guid - Nullable
         /// </summary>
-        [SwaggerIgnore]
+        [SwaggerSchema("Approver Id of ToDo Enrty", ReadOnly = true)]
         public Guid? ApprovedBy { get; set; }
     }
 
     /// <summary>
     /// ToDoStatus Enum - One of the following [ 'ToDo', 'Doing', 'Done' ]
     /// </summary>
+    [SwaggerSchema("[ 0 = ToDo, 1 = Doing, 2 = Done ]")]
     public enum ToDoStatus
     {
         /// <summary>
