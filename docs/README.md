@@ -243,4 +243,4 @@ to discuss what you would like to change.
 
 ## License
 
-[MIT](docs/LICENSE.md)
+[MIT](../LICENSE.md)
