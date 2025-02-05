@@ -105,7 +105,7 @@ namespace ToDo_API_Server.Controllers
             // Check If confirm is true and set approval property values
             if (confirm) 
             {
-                toDoEntry.ApprovedTime = DateTime.Now;
+                toDoEntry.ApprovedTime = DateTime.UtcNow;
                 toDoEntry.ApprovedBy = GetUserId();
                 toDoEntry.Status = ToDoStatus.Done;
             }
@@ -116,7 +116,7 @@ namespace ToDo_API_Server.Controllers
 
 #if DEBUG
             // Set Update Time for inMemory database
-            toDoEntry.UpdateTime = DateTime.Now;
+            toDoEntry.UpdateTime = DateTime.UtcNow;
 #endif
 
             // Change State of db entity but ignore createdBy and createdTime
@@ -166,7 +166,7 @@ namespace ToDo_API_Server.Controllers
             toDoEntry.UpdatedBy = GetUserId();
 #if DEBUG
             // Set Update Time for inMemory database
-            toDoEntry.UpdateTime = DateTime.Now;
+            toDoEntry.UpdateTime = DateTime.UtcNow;
 #endif
 
             // Update only values given
@@ -234,7 +234,7 @@ namespace ToDo_API_Server.Controllers
             toDoEntry.CreatedBy = GetUserId();
 #if DEBUG
             // Set Create Time for inMemory database
-            toDoEntry.CreateTime = DateTime.Now;
+            toDoEntry.CreateTime = DateTime.UtcNow;
 #endif
             // Add ToDoEntry to DbSet and Save Changes
             _context.ToDoEntries.Add(toDoEntry);
