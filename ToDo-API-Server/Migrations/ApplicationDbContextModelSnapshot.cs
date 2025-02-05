@@ -17,7 +17,7 @@ namespace ToDo_API_Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.12")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -46,14 +46,6 @@ namespace ToDo_API_Server.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "42397759-8401-41d7-91ad-68d231f9df80",
-                            Name = "Admin",
-                            NormalizedName = "admin"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -143,24 +135,6 @@ namespace ToDo_API_Server.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "197951da-1ff2-4f63-9a8f-5ae5a61d10f1",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "542beef0-bac0-4362-843d-315f9edbf193",
-                            Email = "admin@todoapi.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@TODOAPI.COM",
-                            NormalizedUserName = "ADMIN@TODOAPI.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEO+JRlPAORjsOH0FTzT7JVE0byFi8fLoXGAuTtOwisk529LYT+28StfEL5j4N8kFcQ==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "cd9ecfed-78ac-4111-a984-3c7b14a8b829",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@todoapi.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -223,13 +197,6 @@ namespace ToDo_API_Server.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "197951da-1ff2-4f63-9a8f-5ae5a61d10f1",
-                            RoleId = "42397759-8401-41d7-91ad-68d231f9df80"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

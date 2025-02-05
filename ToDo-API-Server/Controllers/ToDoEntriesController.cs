@@ -114,10 +114,10 @@ namespace ToDo_API_Server.Controllers
             toDoEntry.PendingApproval = false;
             toDoEntry.UpdatedBy = GetUserId();
 
-#if DEBUG
-            // Set Update Time for inMemory database
-            toDoEntry.UpdateTime = DateTime.UtcNow;
-#endif
+//#if DEBUG
+//            // Set Update Time for inMemory database
+//            toDoEntry.UpdateTime = DateTime.UtcNow;
+//#endif
 
             // Change State of db entity but ignore createdBy and createdTime
             _context.Entry(toDoEntry).State = EntityState.Modified;
@@ -164,10 +164,10 @@ namespace ToDo_API_Server.Controllers
 
             // Set UpdatedBy 
             toDoEntry.UpdatedBy = GetUserId();
-#if DEBUG
-            // Set Update Time for inMemory database
-            toDoEntry.UpdateTime = DateTime.UtcNow;
-#endif
+//#if DEBUG
+//            // Set Update Time for inMemory database
+//            toDoEntry.UpdateTime = DateTime.UtcNow;
+//#endif
 
             // Update only values given
             Type t = typeof(ToDoEntry);
@@ -232,10 +232,10 @@ namespace ToDo_API_Server.Controllers
 
             // Set CreatedBy 
             toDoEntry.CreatedBy = GetUserId();
-#if DEBUG
-            // Set Create Time for inMemory database
-            toDoEntry.CreateTime = DateTime.UtcNow;
-#endif
+//#if DEBUG
+//            // Set Create Time for inMemory database
+//            toDoEntry.CreateTime = DateTime.UtcNow;
+//#endif
             // Add ToDoEntry to DbSet and Save Changes
             _context.ToDoEntries.Add(toDoEntry);
             await _context.SaveChangesAsync();
