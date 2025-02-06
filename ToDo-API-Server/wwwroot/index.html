@@ -19,28 +19,53 @@
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Python Tester</a></li>
-                        <li><a href="#">C# Client</a></li>
+                        <li><a href="/ToDo-API-Tester.py">Python Tester</a></li>
+                        <!-- <li><a href="#">C# Client</a></li> -->
                     </ul>
                 </li>
                 <li><a href="/swagger" target="_blank">Swagger</a></li>
                 <li><a href="/api-docs" target="_blank">Api-Docs</a></li>
                 <li><a href="https://github.com/thecryptoalien/ToDo-API-Server" target="_blank">Github</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <!-- <ul class="nav navbar-nav navbar-right">
                 <li><a href="#" data-toggle="modal" data-target="#registerModal"><span class="glyphicon glyphicon-user"></span> Register</a></li>
                 <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-            </ul>
+            </ul> -->
         </div>
     </nav>
 
     <div class="container">
-        <h3>ToDo-API-Server</h3>
-        <p>An Enterprise-Ready ToDo Application API Written in C# .NET 9 Core</p>
+        <h2>ToDo-API-Server</h2>
+        <p>ToDo-API-Server is an enterprise-ready To-Do application API written in C# 
+            <a href="https://dotnet.microsoft.com/en-us/learn/dotnet/what-is-dotnet" rel="nofollow">.NET</a> 9 core. It uses 
+            <a href="https://www.postgresql.org/" rel="nofollow">PostgreSql</a> with <a href="https://github.com/npgsql/npgsql">Npgsql</a> and 
+            <a href="https://learn.microsoft.com/en-us/ef/core/" rel="nofollow">Entity Framework Core</a> for database operations. Combined with 
+            <a href="https://swagger.io/" rel="nofollow">Swagger.io</a> and <a href="https://github.com/Redocly/redoc">ReDoc</a> 
+            for testing and documentation this To-Do API has it all. It can operate as a standalone application but can also be run from a 
+            <a href="https://www.docker.com/" rel="nofollow">Docker</a> container. This application API also has rate limiting incorporated currently 
+            set to 30 requests a minute.</p>
+
+            <p>There is only one or two things that are missing, only because the time frame for this project was short.
+                 Email integration, is very important for a production application, however I do not currently have an email server to route the smtp 
+                 request through. Because of no email integration 2fa is affected, this I am well aware of. I'm sure if you need email integration that 
+                 it is an easy addition and would not take long to complete.</p>
+
+            <h3>Requirements</h3>
+            <p>The requirements to build or run this project are a follows.</p>
+            <h5>For Building from source</h5>
+            <p>Recommended: <a href="https://visualstudio.microsoft.com/" rel="nofollow">Visual Studio 2022</a> or 
+                <a href="https://code.visualstudio.com/" rel="nofollow">Visual Studio Code</a><br>
+                Required: .NET 9.0 SDK - You can get from <a href="https://dotnet.microsoft.com/en-us/download/dotnet/9.0" rel="nofollow">here</a></p>
+            <h5>For Running from release</h5>
+            <p>Required: .NET Runtime 9.0 - Also available from <a href="https://dotnet.microsoft.com/en-us/download/dotnet/9.0" rel="nofollow">here</a></p>
+            <h5>For Running with Docker</h5>
+            <p>Required: <a href="https://www.docker.com/" rel="nofollow">Docker</a></p>
+            <p dir="auto">Note: Assuming you have a <a href="https://www.postgresql.org/" rel="nofollow">PostgreSql</a> database server already ready, 
+                if not see <a href="https://www.devart.com/dbforge/postgresql/how-to-install-postgresql-on-linux/" rel="nofollow">here</a> for linux or 
+                <a href="https://www.w3schools.com/postgresql/postgresql_install.php" rel="nofollow">here</a> for windows.</p>
     </div>
 
-
-    <!-- Modal -->
+    <!-- Modal
     <div class="modal fade" id="registerModal" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -56,7 +81,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 </body>
 </html>

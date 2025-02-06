@@ -163,6 +163,7 @@ app.MapControllers().RequireRateLimiting("fixedLimits");
 // Use Default and static files
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.MapStaticAssets();
 
 // Run application
 app.Run();

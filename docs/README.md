@@ -43,16 +43,16 @@ Depending on if you build from source or download a release the methods vary. He
 For security reasons I like to use environment variables where possible. With .NET they have made it easy for us, see [here](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-9.0#security-and-user-secrets) for more on the way .NET core uses them. 
 ###### ConnectionStrings__AppDb -  Required if not building from source and using applicationSettings.json 
 ```bash
-EXPORT ConnectionStrings__AppDb="Host=*HOST*; Port=*PORT*; Database=*DB*; Username=*USER*; Password=*PASS*;"
+export ConnectionStrings__AppDb="Host=*HOST*; Port=*PORT*; Database=*DB*; Username=*USER*; Password=*PASS*;"
 ```
 ###### HostSettings__ApiUrl - Optional if you are hosting with a custom prefix like [here](https://danmanthenomad.com/ToDo-API-Server/) 
 ```bash
-EXPORT HostSettings__ApiUrl="https://yourwebsite/To-Do-API"
+export HostSettings__ApiUrl="https://yourwebsite/To-Do-API"
 ```
 ###### SeedData__AdminEmail & SeedData__AdminPassword - Optional for seeding an inital or additional admin user 
 ```bash
-EXPORT SeedData__AdminEmail="admin@email.com"
-EXPORT SeedData__AdminPassword="adminPassword123!"
+export SeedData__AdminEmail="admin@email.com"
+export SeedData__AdminPassword="adminPassword123!"
 ```
 Note: These examples have placeholders like \*HOST*, \*PORT*, \*DB*, and others. Please replace them with the appropriate information for your usage.
 
